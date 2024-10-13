@@ -15,7 +15,7 @@ const SubCategory = () => {
 
   // Fetch categories to select CATEGORYID
   useEffect(() => {
-    fetch('http://storezan.com/webapi/STORE/category', {
+    fetch('https://www.storezan.com/webapi/STORE/category', {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
@@ -40,7 +40,12 @@ const SubCategory = () => {
         'Authorization': `Bearer ${token}`, // Use the token
       },
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
+        return response.json();
+      })
       .then((data) => {
         if (data.status && data.status[0].stat === 'T') {
           alert('Subcategory added successfully!');
