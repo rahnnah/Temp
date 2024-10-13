@@ -8,8 +8,6 @@ const SubCategory = () => {
   const [subcategoryName, setSubcategoryName] = useState('');
   const [subcategoryDesc, setSubcategoryDesc] = useState('');
   const [categoryID, setCategoryID] = useState('');
-  const [subcategoryStatus, setSubcategoryStatus] = useState('T'); // Default active status
-  const [token, setToken] = useState(''); // Store the bearer token
 
   const navigate = useNavigate();
 
@@ -31,13 +29,12 @@ const SubCategory = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const url = `https://www.storezan.com/webapi/STORE/savesubcategory?SUBCATEGORYNAME=${subcategoryName}&SUBCATEGORYDESC=${subcategoryDesc}&CATEGORYID=${categoryID}&SUBCATEGORYSTATUS=${subcategoryStatus}`;
+    const url = `https://www.storezan.com/webapi/STORE/savesubcategory?SUBCATEGORYNAME=${subcategoryName}&SUBCATEGORYDESC=${subcategoryDesc}&CATEGORYID=${categoryID}`;
 
     fetch(url, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': `Bearer ${token}`, // Use the token
       },
     })
       .then((response) => {
@@ -104,31 +101,6 @@ const SubCategory = () => {
           </select>
         </div>
 
-        <div className="form-group">
-          <label htmlFor="subcategoryStatus">Status:</label>
-          <select
-            id="subcategoryStatus"
-            value={subcategoryStatus}
-            onChange={(e) => setSubcategoryStatus(e.target.value)}
-            required
-          >
-            <option value="T">Active</option>
-            <option value="F">Inactive</option>
-          </select>
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="token">Bearer Token:</label>
-          <input
-            type="text"
-            id="token"
-            value={token}
-            onChange={(e) => setToken(e.target.value)}
-            placeholder="Enter bearer token"
-            required
-          />
-        </div>
-
         <button type="submit" className="submit-btn">
           Save Subcategory
         </button>
@@ -140,3 +112,4 @@ const SubCategory = () => {
 };
 
 export default SubCategory;
+
