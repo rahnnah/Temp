@@ -3,11 +3,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start; /* Align content closer to the top */
   padding: 20px;
   font-family: 'Arial', sans-serif;
   background-color: #f7f9fc; /* Light background */
-  min-height: 100vh;
+  min-height: 100vh; /* Full screen height */
+  padding-top: 40px; /* Adjust top padding to control spacing */
 }
 
 .breadcrumb {
@@ -34,6 +35,7 @@
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 500px;
+  margin-top: -20px; /* Adjust the top margin to bring it closer to the heading */
 }
 
 .form-group {
@@ -94,5 +96,6 @@
     width: 100%;
   }
 }
+
 
 
