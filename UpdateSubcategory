@@ -1,25 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom'; // useParams for getting the SUBCATEGORYID from the URL
 import './SubCategory.css'; // CSS for styling the page
 import Footer from '../components/Footer'; // Footer component for the page
 
-const SubCategory = () => {
+const SubCategory = ({ isEditMode }) => {
   const [categories, setCategories] = useState([]); // Store fetched categories
-  const [subcategories, setSubcategories] = useState([]); // Store fetched subcategories
   const [subcategoryName, setSubcategoryName] = useState('');
   const [subcategoryDesc, setSubcategoryDesc] = useState('');
   const [categoryID, setCategoryID] = useState('');
-  const [subcategoryStatus, setSubcategoryStatus] = useState('T'); // Default active status
-  const [token, setToken] = useState(''); // Store the bearer token
-
-  // For update
-  const [selectedSubcategoryID, setSelectedSubcategoryID] = useState(''); // Store selected subcategory ID for update
-  const [updateName, setUpdateName] = useState('');
-  const [updateDesc, setUpdateDesc] = useState('');
-  const [updateCategoryID, setUpdateCategoryID] = useState('');
-  const [updateStatus, setUpdateStatus] = useState('T');
+  const [subcategoryStatus, setSubcategoryStatus] = useState('T'); // Default status 'T'
+  const [subcategoryID, setSubcategoryID] = useState(''); // Store the subcategory ID for editing
 
   const navigate = useNavigate();
+  const { id } = useParams(); // Get SUBCATEGORYID from the URL (for update)
 
   // Fetch categories to select CATEGORYID
   useEffect(() => {
@@ -35,77 +28,58 @@ const SubCategory = () => {
       .catch((error) => console.error('Error fetching category data:', error));
   }, []);
 
-  // Fetch existing subcategories
+  // Fetch subcategory details if editing
   useEffect(() => {
-    if (token) { // Only fetch subcategories if token is available
-      fetch('https://www.storezan.com/webapi/STORE/getsubcategory', {
+    if (isEditMode && id) {
+      fetch(`https://www.storezan.com/webapi/STORE/getsubcategory?SUBCATEGORYID=${id}`, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': `Bearer ${token}`,
         },
       })
         .then((response) => response.json())
         .then((data) => {
-          setSubcategories(data.subcategory); // Store the fetched subcategories
+          const subcategory = data.subcategory[0]; // Assuming the response returns subcategory data in this format
+          setSubcategoryID(subcategory.SUBCATEGORYID);
+          setSubcategoryName(subcategory.SUBCATEGORYNAME);
+          setSubcategoryDesc(subcategory.SUBCATEGORYDESC);
+          setCategoryID(subcategory.CATEGORYID);
+          setSubcategoryStatus(subcategory.SUBCATEGORYSTATUS);
         })
         .catch((error) => console.error('Error fetching subcategory data:', error));
     }
-  }, [token]);
+  }, [isEditMode, id]);
 
-  // Handle subcategory form submission (for adding a new subcategory)
+  // Handle subcategory form submission for add or update
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const url = `https://www.storezan.com/webapi/STORE/savesubcategory?SUBCATEGORYNAME=${subcategoryName}&SUBCATEGORYDESC=${subcategoryDesc}&CATEGORYID=${categoryID}&SUBCATEGORYSTATUS=${subcategoryStatus}`;
+    const url = isEditMode
+      ? `https://www.storezan.com/webapi/STORE/updatesubcategory?SUBCATEGORYID=${subcategoryID}&SUBCATEGORYNAME=${subcategoryName}&SUBCATEGORYDESC=${subcategoryDesc}&CATEGORYID=${categoryID}&SUBCATEGORYSTATUS=${subcategoryStatus}`
+      : `https://www.storezan.com/webapi/STORE/savesubcategory?SUBCATEGORYNAME=${subcategoryName}&SUBCATEGORYDESC=${subcategoryDesc}&CATEGORYID=${categoryID}`;
 
     fetch(url, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': `Bearer ${token}`, // Use the token
       },
     })
       .then((response) => response.json())
       .then((data) => {
         if (data.status && data.status[0].stat === 'T') {
-          alert('Subcategory added successfully!');
+          alert(isEditMode ? 'Subcategory updated successfully!' : 'Subcategory added successfully!');
         } else {
-          alert('Failed to add subcategory.');
+          alert(isEditMode ? 'Failed to update subcategory.' : 'Failed to add subcategory.');
         }
       })
       .catch((error) => console.error('Error saving subcategory:', error));
   };
 
-  // Handle subcategory update submission
-  const handleUpdate = (e) => {
-    e.preventDefault();
-
-    const url = `https://www.storezan.com/webapi/STORE/updatesubcategory?SUBCATEGORYID=${selectedSubcategoryID}&SUBCATEGORYNAME=${updateName}&SUBCATEGORYDESC=${updateDesc}&CATEGORYID=${updateCategoryID}&SUBCATEGORYSTATUS=${updateStatus}`;
-
-    fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': `Bearer ${token}`, // Use the token
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.status && data.status[0].stat === 'T') {
-          alert('Subcategory updated successfully!');
-        } else {
-          alert('Failed to update subcategory.');
-        }
-      })
-      .catch((error) => console.error('Error updating subcategory:', error));
-  };
-
   return (
     <div className="subcategory-page">
-      <div className="breadcrumb">Dashboard / Subcategory</div>
+      <div className="breadcrumb">Dashboard / {isEditMode ? 'Edit' : 'Add'} Subcategory</div>
 
       <div className="small-heading">
-        <h4>Add Subcategory</h4>
+        <h4>{isEditMode ? 'Edit Subcategory' : 'Add Subcategory'}</h4>
       </div>
 
       <form onSubmit={handleSubmit} className="subcategory-form">
@@ -148,115 +122,25 @@ const SubCategory = () => {
           </select>
         </div>
 
-        <div className="form-group">
-          <label htmlFor="subcategoryStatus">Status:</label>
-          <select
-            id="subcategoryStatus"
-            value={subcategoryStatus}
-            onChange={(e) => setSubcategoryStatus(e.target.value)}
-            required
-          >
-            <option value="T">Active</option>
-            <option value="F">Inactive</option>
-          </select>
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="token">Bearer Token:</label>
-          <input
-            type="text"
-            id="token"
-            value={token}
-            onChange={(e) => setToken(e.target.value)}
-            placeholder="Enter bearer token"
-            required
-          />
-        </div>
-
-        <button type="submit" className="submit-btn">
-          Save Subcategory
-        </button>
-      </form>
-
-      {/* Update Subcategory */}
-      <div className="update-section">
-        <h4>Update Subcategory</h4>
-        <form onSubmit={handleUpdate}>
+        {isEditMode && (
           <div className="form-group">
-            <label htmlFor="selectedSubcategoryID">Subcategory ID:</label>
-            <input
-              type="text"
-              id="selectedSubcategoryID"
-              value={selectedSubcategoryID}
-              onChange={(e) => setSelectedSubcategoryID(e.target.value)}
-              placeholder="Enter subcategory ID to update"
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="updateName">New Subcategory Name:</label>
-            <input
-              type="text"
-              id="updateName"
-              value={updateName}
-              onChange={(e) => setUpdateName(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="updateDesc">New Description:</label>
-            <input
-              type="text"
-              id="updateDesc"
-              value={updateDesc}
-              onChange={(e) => setUpdateDesc(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="updateCategoryID">New Category ID:</label>
-            <input
-              type="text"
-              id="updateCategoryID"
-              value={updateCategoryID}
-              onChange={(e) => setUpdateCategoryID(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="updateStatus">New Status:</label>
+            <label htmlFor="subcategoryStatus">Subcategory Status:</label>
             <select
-              id="updateStatus"
-              value={updateStatus}
-              onChange={(e) => setUpdateStatus(e.target.value)}
+              id="subcategoryStatus"
+              value={subcategoryStatus}
+              onChange={(e) => setSubcategoryStatus(e.target.value)}
               required
             >
               <option value="T">Active</option>
               <option value="F">Inactive</option>
             </select>
           </div>
+        )}
 
-          <button type="submit" className="submit-btn">
-            Update Subcategory
-          </button>
-        </form>
-      </div>
-
-      {/* Display Subcategories */}
-      <div className="subcategory-list">
-        <h4>Existing Subcategories</h4>
-        <ul>
-          {subcategories.map((subcategory) => (
-            <li key={subcategory.SUBCATEGORYID}>
-              {subcategory.SUBCATEGORYNAME} (ID: {subcategory.SUBCATEGORYID})
-            </li>
-          ))}
-        </ul>
-      </div>
+        <button type="submit" className="submit-btn">
+          {isEditMode ? 'Update Subcategory' : 'Save Subcategory'}
+        </button>
+      </form>
 
       <Footer />
     </div>
@@ -264,3 +148,4 @@ const SubCategory = () => {
 };
 
 export default SubCategory;
+
