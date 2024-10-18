@@ -3,28 +3,31 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* Align content closer to the top */
+  justify-content: flex-start;
   padding: 20px;
   font-family: 'Arial', sans-serif;
-  background-color: #f7f9fc; /* Light background */
-  min-height: 100vh; /* Full screen height */
-  padding-top: 40px; /* Adjust top padding to control spacing */
+  background-color: #f7f9fc;
+  min-height: 100vh;
+  padding-top: 40px; /* Ensures the content is not too close to the top */
 }
 
+/* Breadcrumb styling */
 .breadcrumb {
   font-size: 14px;
   color: #666;
   margin-bottom: 10px;
   width: 100%;
   text-align: left;
-  padding-left: 20px;
+  padding-left: 20px; /* Ensures alignment with form padding */
 }
 
+/* Section heading */
 .small-heading h4 {
   margin-bottom: 20px;
   font-size: 24px;
   font-weight: bold;
   color: #333;
+  text-align: center; /* Aligns heading at the center for a balanced view */
 }
 
 /* Styling the form */
@@ -35,7 +38,7 @@
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 500px;
-  margin-top: -20px; /* Adjust the top margin to bring it closer to the heading */
+  margin-top: 10px; /* Slightly adjusted margin for better spacing */
 }
 
 .form-group {
@@ -67,10 +70,11 @@
 }
 
 .form-group select {
-  appearance: none; /* Remove default arrow */
+  appearance: none;
   background: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="292.362" height="292.362" viewBox="0 0 292.362 292.362"><path fill="%23747474" d="M287.812 69.088L166.895 189.005a18.345 18.345 0 01-25.918 0L4.55 69.088C1.515 66.053 0 62.066 0 57.835c0-4.232 1.515-8.218 4.55-11.253l11.252-11.252a15.327 15.327 0 0111.252-4.55c4.23 0 8.218 1.515 11.252 4.55l116.174 116.174 116.174-116.174c3.035-3.035 7.023-4.55 11.252-4.55s8.218 1.515 11.252 4.55l11.252 11.252c3.035 3.035 4.55 7.023 4.55 11.252s-1.515 8.218-4.55 11.253z"/></svg>') no-repeat right 12px center;
   background-size: 12px;
   background-color: #fff;
+  padding-right: 40px; /* Add space for the custom arrow */
 }
 
 /* Button Group Styling */
@@ -78,7 +82,7 @@
   display: flex;
   justify-content: space-between;
   gap: 10px;
-  margin-top: 20px; /* Space between form and buttons */
+  margin-top: 20px;
 }
 
 .button-group .btn {
@@ -89,9 +93,8 @@
   padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
-  width: 48%; /* Ensures buttons take equal width in the group */
+  width: 48%; /* Ensures equal button widths */
   transition: background-color 0.3s;
-  text-align: center;
 }
 
 .button-group .btn:hover {
@@ -127,10 +130,9 @@
 @media (max-width: 600px) {
   .subcategory-form {
     padding: 20px;
-    width: 100%;
   }
 
   .button-group .btn {
-    width: 100%; /* Make buttons stack vertically on smaller screens */
+    width: 100%; /* Stacking buttons vertically on smaller screens */
   }
 }
