@@ -73,7 +73,7 @@
   background-color: #fff;
 }
 
-/* Styling the buttons */
+/* Button Group Styling */
 .button-group {
   display: flex;
   justify-content: space-between;
@@ -106,6 +106,7 @@
   background-color: #5a6268;
 }
 
+/* General submit button styling */
 .submit-btn {
   background-color: #007bff;
   color: #fff;
@@ -133,4 +134,3 @@
     width: 100%; /* Make buttons stack vertically on smaller screens */
   }
 }
-
