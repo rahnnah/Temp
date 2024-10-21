@@ -1,138 +1,71 @@
-/* General styles for the subcategory page */
-.subcategory-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 20px;
-  font-family: 'Arial', sans-serif;
-  background-color: #f7f9fc;
-  min-height: 100vh;
-  padding-top: 40px; /* Ensures the content is not too close to the top */
-}
-
-/* Breadcrumb styling */
-.breadcrumb {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 10px;
+/* Styles for the subcategory list */
+.subcategory-list {
   width: 100%;
-  text-align: left;
-  padding-left: 20px; /* Ensures alignment with form padding */
-}
-
-/* Section heading */
-.small-heading h4 {
-  margin-bottom: 20px;
-  font-size: 24px;
-  font-weight: bold;
-  color: #333;
-  text-align: center; /* Aligns heading at the center for a balanced view */
-}
-
-/* Styling the form */
-.subcategory-form {
+  max-width: 800px; /* Set max-width to keep the layout neat */
+  margin-top: 30px; /* Adds spacing between the form and the table */
   background-color: #fff;
-  padding: 30px;
+  padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Table styling */
+.subcategory-table {
   width: 100%;
-  max-width: 500px;
-  margin-top: 10px; /* Slightly adjusted margin for better spacing */
-}
-
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #333;
-}
-
-.form-group input[type="text"],
-.form-group select {
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  transition: border-color 0.3s;
-}
-
-.form-group input[type="text"]:focus,
-.form-group select:focus {
-  border-color: #007bff;
-  outline: none;
-}
-
-.form-group select {
-  appearance: none;
-  background: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="292.362" height="292.362" viewBox="0 0 292.362 292.362"><path fill="%23747474" d="M287.812 69.088L166.895 189.005a18.345 18.345 0 01-25.918 0L4.55 69.088C1.515 66.053 0 62.066 0 57.835c0-4.232 1.515-8.218 4.55-11.253l11.252-11.252a15.327 15.327 0 0111.252-4.55c4.23 0 8.218 1.515 11.252 4.55l116.174 116.174 116.174-116.174c3.035-3.035 7.023-4.55 11.252-4.55s8.218 1.515 11.252 4.55l11.252 11.252c3.035 3.035 4.55 7.023 4.55 11.252s-1.515 8.218-4.55 11.253z"/></svg>') no-repeat right 12px center;
-  background-size: 12px;
-  background-color: #fff;
-  padding-right: 40px; /* Add space for the custom arrow */
-}
-
-/* Button Group Styling */
-.button-group {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
+  border-collapse: collapse; /* Collapses borders to remove spacing */
   margin-top: 20px;
 }
 
-.button-group .btn {
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  padding: 10px 20px;
+.subcategory-table th, .subcategory-table td {
+  text-align: left;
+  padding: 12px 15px;
+  border: 1px solid #ddd; /* Adds border between table cells */
+}
+
+.subcategory-table th {
+  background-color: #f4f6f9; /* Light background for the header */
+  color: #333;
+  font-weight: bold;
   font-size: 16px;
+}
+
+.subcategory-table td {
+  font-size: 14px;
+  color: #555;
+}
+
+.subcategory-table tr:nth-child(even) {
+  background-color: #f9f9f9; /* Alternating row colors for readability */
+}
+
+/* Checkbox styling */
+.subcategory-table input[type="checkbox"] {
   cursor: pointer;
-  width: 48%; /* Ensures equal button widths */
-  transition: background-color 0.3s;
+  width: 18px;
+  height: 18px;
+  accent-color: #007bff; /* Blue color for the checkbox when selected */
 }
 
-.button-group .btn:hover {
-  background-color: #0056b3;
-}
-
-.button-group .btn-secondary {
-  background-color: #6c757d;
-}
-
-.button-group .btn-secondary:hover {
-  background-color: #5a6268;
-}
-
-/* General submit button styling */
-.submit-btn {
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  padding: 10px 20px;
+/* Empty state styling */
+.subcategory-table td[colspan="4"] {
+  text-align: center;
   font-size: 16px;
-  cursor: pointer;
-  width: 100%;
-  transition: background-color 0.3s;
+  color: #999;
 }
 
-.submit-btn:hover {
-  background-color: #0056b3;
-}
-
-/* Responsive design for smaller screens */
+/* Responsive styling */
 @media (max-width: 600px) {
-  .subcategory-form {
-    padding: 20px;
+  .subcategory-list {
+    padding: 15px;
   }
 
-  .button-group .btn {
-    width: 100%; /* Stacking buttons vertically on smaller screens */
+  .subcategory-table th, .subcategory-table td {
+    padding: 10px;
+    font-size: 12px;
+  }
+
+  .subcategory-table input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
   }
 }
