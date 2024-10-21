@@ -5,8 +5,11 @@ import Footer from '../components/Footer'; // Footer component for the page
 
 const SubCategory = () => {
   const [categories, setCategories] = useState([]); // Store fetched categories
+  const [subcategoryName, setSubcategoryName] = useState(''); // Subcategory name input state
+  const [subcategoryDesc, setSubcategoryDesc] = useState(''); // Subcategory description input state
+  const [categoryID, setCategoryID] = useState(''); // Category ID input state
   const [subcategories, setSubcategories] = useState([]); // Store fetched subcategories
-  const [selectedSubcategories, setSelectedSubcategories] = useState([]); // Store selected subcategories
+  const [selectedSubcategories, setSelectedSubcategories] = useState([]); // Selected subcategories for handling checkbox logic
 
   const navigate = useNavigate();
 
@@ -19,12 +22,7 @@ const SubCategory = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        // Ensure data.category exists before setting it
-        if (data && data.category) {
-          setCategories(data.category);
-        } else {
-          console.error('Category data is missing or not properly structured.');
-        }
+        setCategories(data.category); // Store categories in state
       })
       .catch((error) => console.error('Error fetching category data:', error));
   }, []);
@@ -38,22 +36,54 @@ const SubCategory = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        // Ensure data.subcategory exists before setting it
-        if (data && data.subcategory) {
-          setSubcategories(data.subcategory);
-        } else {
-          console.error('Subcategory data is missing or not properly structured.');
-        }
+        setSubcategories(data.subcategory); // Store subcategories in state
       })
       .catch((error) => console.error('Error fetching subcategory data:', error));
   }, []);
 
-  // Handle subcategory selection
+  // Handle subcategory form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const url = `https://www.storezan.com/webapi/STORE/savesubcategory?SUBCATEGORYNAME=${subcategoryName}&SUBCATEGORYDESC=${subcategoryDesc}&CATEGORYID=${categoryID}`;
+
+    fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status && data.status[0].stat === 'T') {
+          alert('Subcategory added successfully!');
+          // Refresh subcategory list after adding
+          fetchSubcategories();
+        } else {
+          alert('Failed to add subcategory.');
+        }
+      })
+      .catch((error) => console.error('Error saving subcategory:', error));
+  };
+
+  // Fetch updated subcategories after adding a new one
+  const fetchSubcategories = () => {
+    fetch('https://www.storezan.com/webapi/STORE/getsubcategory', {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setSubcategories(data.subcategory); // Refresh subcategories in state
+      })
+      .catch((error) => console.error('Error fetching subcategory data:', error));
+  };
+
+  // Handle subcategory selection (for checkboxes)
   const handleSelectSubcategory = (subcategoryId) => {
     if (selectedSubcategories.includes(subcategoryId)) {
-      setSelectedSubcategories(
-        selectedSubcategories.filter((id) => id !== subcategoryId)
-      );
+      setSelectedSubcategories(selectedSubcategories.filter(id => id !== subcategoryId));
     } else {
       setSelectedSubcategories([...selectedSubcategories, subcategoryId]);
     }
@@ -64,42 +94,90 @@ const SubCategory = () => {
       <div className="breadcrumb">Dashboard / Subcategory</div>
 
       <div className="small-heading">
-        <h4>Add or Modify Subcategory</h4>
+        <h4>Add Subcategory</h4>
       </div>
 
+      <form onSubmit={handleSubmit} className="subcategory-form">
+        <div className="form-group">
+          <label htmlFor="subcategoryName">Subcategory Name:</label>
+          <input
+            type="text"
+            id="subcategoryName"
+            value={subcategoryName}
+            onChange={(e) => setSubcategoryName(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="subcategoryDesc">Description:</label>
+          <input
+            type="text"
+            id="subcategoryDesc"
+            value={subcategoryDesc}
+            onChange={(e) => setSubcategoryDesc(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="categoryID">Select Category:</label>
+          <select
+            id="categoryID"
+            value={categoryID}
+            onChange={(e) => setCategoryID(e.target.value)}
+            required
+          >
+            <option value="">-- Select Category --</option>
+            {categories.map((category) => (
+              <option key={category.CATID} value={category.CATID}>
+                {category.CATNAME}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <button type="submit" className="submit-btn">
+          Save Subcategory
+        </button>
+      </form>
+
       {/* Table for displaying subcategories */}
-      <table className="subcategory-table">
-        <thead>
-          <tr>
-            <th>Select</th>
-            <th>Subcategory Name</th>
-            <th>Description</th>
-            <th>Category Name</th>
-          </tr>
-        </thead>
-        <tbody>
-          {subcategories && subcategories.length > 0 ? (
-            subcategories.map((subcategory) => (
-              <tr key={subcategory.SUBCATEGORYID}>
-                <td>
-                  <input
-                    type="checkbox"
-                    checked={selectedSubcategories.includes(subcategory.SUBCATEGORYID)}
-                    onChange={() => handleSelectSubcategory(subcategory.SUBCATEGORYID)}
-                  />
-                </td>
-                <td>{subcategory.SUBCATEGORYNAME}</td>
-                <td>{subcategory.SUBCATEGORYDESC}</td>
-                <td>{subcategory.CATEGORYNAME}</td>
-              </tr>
-            ))
-          ) : (
+      <div className="subcategory-list">
+        <h4>Existing Subcategories</h4>
+        <table className="subcategory-table">
+          <thead>
             <tr>
-              <td colSpan="4">No subcategories available</td>
+              <th>Select</th>
+              <th>Subcategory Name</th>
+              <th>Description</th>
+              <th>Category Name</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {subcategories && subcategories.length > 0 ? (
+              subcategories.map((subcategory) => (
+                <tr key={subcategory.SUBCATEGORYID}>
+                  <td>
+                    <input
+                      type="checkbox"
+                      checked={selectedSubcategories.includes(subcategory.SUBCATEGORYID)}
+                      onChange={() => handleSelectSubcategory(subcategory.SUBCATEGORYID)}
+                    />
+                  </td>
+                  <td>{subcategory.SUBCATEGORYNAME}</td>
+                  <td>{subcategory.SUBCATEGORYDESC}</td>
+                  <td>{subcategory.CATEGORYNAME}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="4">No subcategories available</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
 
       <Footer />
     </div>
